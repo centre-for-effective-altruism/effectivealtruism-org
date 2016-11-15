@@ -1,14 +1,14 @@
-// Schema for series
+// Schema for quotations
 module.exports = {
   name: {
-    singular: 'Series',
-    plural: 'Series'
+    singular: 'Quotation',
+    plural: 'Quotations'
   },
   slug: {
-    singular: 'series',
-    plural: 'series'
+    singular: 'quotation',
+    plural: 'quotations'
   },
-  contentfulId: 'series',
+  contentfulId: 'quotation',
   contentfulFilenameField: 'fields.slug',
   collection: {
     sort: 'title',

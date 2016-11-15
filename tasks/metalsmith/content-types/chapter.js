@@ -1,14 +1,14 @@
-// Schema for series
+// Schema for chapters
 module.exports = {
   name: {
-    singular: 'Series',
-    plural: 'Series'
+    singular: 'Chapter',
+    plural: 'Chapters'
   },
   slug: {
-    singular: 'series',
-    plural: 'series'
+    singular: 'chapter',
+    plural: 'chapters'
   },
-  contentfulId: 'series',
+  contentfulId: 'chapter',
   contentfulFilenameField: 'fields.slug',
   collection: {
     sort: 'title',

@@ -1,14 +1,14 @@
-// Schema for links
+// Schema for media-items
 module.exports = {
   name: {
-    singular: 'Link',
-    plural: 'Links'
+    singular: 'Media Item',
+    plural: 'Media Items'
   },
   slug: {
-    singular: 'link',
-    plural: 'links'
+    singular: 'media-item',
+    plural: 'media-items'
   },
-  contentfulId: 'link',
+  contentfulId: 'mediaItem',
   contentfulFilenameField: 'sys.id',
   collection: {
     sort: 'title',

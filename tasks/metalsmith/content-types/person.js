@@ -1,14 +1,14 @@
-// Schema for pages
+// Schema for people
 module.exports = {
   name: {
-    singular: 'Page',
-    plural: 'Pages'
+    singular: 'Person',
+    plural: 'People'
   },
   slug: {
-    singular: 'page',
-    plural: 'pages'
+    singular: 'person',
+    plural: 'people'
   },
-  contentfulId: 'page',
+  contentfulId: 'person',
   contentfulFilenameField: 'fields.slug',
   collection: {
     sort: 'title',
