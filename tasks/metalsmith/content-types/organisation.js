@@ -10,9 +10,6 @@ module.exports = {
   },
   contentfulId: 'organisation',
   contentfulFilenameField: 'fields.slug',
-  collection: {
-    sort: 'title',
-    reverse: false
-  },
-  createPage: true
+  collection: false,
+  createPage: false
 }

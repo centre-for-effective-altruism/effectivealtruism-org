@@ -1,6 +1,6 @@
 mixin parentLink(position, file)
 	if file.parent && file.parent.sys.id
-		- var parentFile = fileIDMap[file.parent.sys.id];
+		- var parentFile = contentfulIDMap[file.parent.sys.id];
 			em #{position} of this series
 			br
 			a(href=parentFile.path)

@@ -1,0 +1,20 @@
+extends ./page
+
+block header
+  .row
+    .col-md-10.col-md-offset-1.col-lg-8.col-lg-offset-2
+      include ./layout/header
+      +header()
+
+block content
+  #content
+    .row
+      main.col-md-10.col-md-offset-1.col-lg-8.col-lg-offset-2
+        if authors && authors.length
+          .article-authors
+            | by 
+            include ./helpers/format-multiple-names
+            +formatMultipleNames(authors)
+        != contents
+        block postContent
+          include ./components/series-pagination

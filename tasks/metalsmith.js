@@ -40,9 +40,38 @@ const concat = require('metalsmith-concat')
 const branch = require('metalsmith-branch')
 message.status('Loaded utility plugins')
 // Markdown processing
-const markdown = require('metalsmith-markdownit')
+const MarkdownIt = require('metalsmith-markdownit')
 const MarkdownItAttrs = require('markdown-it-attrs')
+const MarkdownItSup = require('markdown-it-sup')
+const MarkdownItSub = require('markdown-it-sub')
 const MarkdownItFootnote = require('markdown-it-footnote')
+const MarkdownItContainer = require('markdown-it-container')
+const markdown = MarkdownIt({
+  plugin: {
+    pattern: '**/*.html'
+  },
+  breaks: true
+})
+  .use(MarkdownItAttrs)
+  .use(MarkdownItSup)
+  .use(MarkdownItSub)
+  .use(MarkdownItFootnote)
+  .use(MarkdownItContainer, 'classname', {
+    validate: name => {
+      const classes = name.trim().split(' ')
+      return classes.every((className) => {
+        return /^[a-zA-Z0-9\-]+$/.test(className)
+      })
+    },
+    render: (tokens, idx) => {
+      if (tokens[idx].nesting === 1) {
+        return `<div class="${tokens[idx].info.trim()}">
+`
+      } else {
+        return '</div>\n'
+      }
+    }
+  })
 const htmlPostprocessing = require(paths.lib('metalsmith/plugins/html-postprocessing'))
 const sanitizeShortcodes = require(paths.lib('metalsmith/plugins/sanitize-shortcodes.js'))
 const saveRawContents = require(paths.lib('metalsmith/plugins/save-raw-contents'))
@@ -68,7 +97,7 @@ const layoutUtils = {
 }
 
 const shortcodeOpts = Object.assign({
-  directory: paths.templates('shortcodes'),
+  directory: paths.layouts('shortcodes'),
   pattern: '**/*.html',
   engine: 'pug',
   extension: '.pug'
@@ -92,6 +121,8 @@ const addPaths = require(paths.lib('metalsmith/plugins/add-paths.js'))
 const createContentfulFileIdMap = require(paths.lib('metalsmith/plugins/create-contentful-file-id-map.js'))
 const createSeriesHierarchy = require(paths.lib('metalsmith/plugins/create-series-hierarchy.js'))
 const addCanonicalUrls = require(paths.lib('metalsmith/plugins/add-canonical-urls'))
+var headingsIdentifier = require('metalsmith-headings-identifier')
+var headings = require('metalsmith-headings')
 message.status('Loaded metadata plugins')
 
 // only require these modules in production
@@ -138,7 +169,12 @@ function build (buildCount) {
       .use(_message.info('Downloaded content from Contentful'))
       .use(processContentfulMetadata())
       .use(createContentfulFileIdMap())
-      .use(remapLayoutNames())
+      .use(remapLayoutNames({
+        'Home Page': 'home.pug',
+        'Basic Page': 'page.pug',
+        'Page with Table of Contents': 'page-with-toc.pug',
+        'Article with Table of Contents': 'article-with-toc.pug'
+      }))
       .use(_message.info('Processed Contentful metadata'))
       .use(collections(contentTypes.collections))
       .use(pagination(contentTypes.pagination))
@@ -178,11 +214,7 @@ function build (buildCount) {
       .use(createSeriesHierarchy())
       .use(_message.info('Built series hierarchy'))
       // Build HTML files
-      .use(markdown({
-        plugin: {
-          pattern: '**/*.html'
-        }
-      }).use(MarkdownItAttrs).use(MarkdownItFootnote))
+      .use(markdown)
       .use(_message.info('Converted Markdown to HTML'))
       .use(htmlPostprocessing())
       .use(sanitizeShortcodes())
@@ -190,6 +222,20 @@ function build (buildCount) {
       .use(excerpts())
       .use(shortcodes(shortcodeOpts))
       .use(_message.info('Converted Shortcodes'))
+      .use(branch(function (filename, props) {
+        return props.collection && (
+          props.collection.indexOf('pages') > -1 ||
+          props.collection.indexOf('articles') > -1
+        )
+      })
+        .use(headingsIdentifier({
+          linkTemplate: '<a class="heading-permalink" href="#%s"><span></span></a>'
+        }))
+        .use(headings({
+          selectors: ['h2,h3,h4']
+        }))
+        .use(_message.info('Created TOCs'))
+      )
       .use(deleteFiles({
         filter: `@(${contentTypes.exclusion.join('|')})/**`
       }))

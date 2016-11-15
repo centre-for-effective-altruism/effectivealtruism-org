@@ -10,9 +10,6 @@ module.exports = {
   },
   contentfulId: 'link',
   contentfulFilenameField: 'sys.id',
-  collection: {
-    sort: 'title',
-    reverse: false
-  },
+  collection: false,
   createPage: false
 }

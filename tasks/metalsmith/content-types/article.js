@@ -14,5 +14,8 @@ module.exports = {
     sort: 'date',
     reverse: true
   },
-  createPage: true
+  createPage: true,
+  pagination: {
+    perPage: 10
+  }
 }
